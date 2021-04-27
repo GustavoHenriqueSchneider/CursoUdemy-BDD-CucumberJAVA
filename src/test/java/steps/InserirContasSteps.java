@@ -18,61 +18,24 @@ import java.io.IOException;
 
 public class InserirContasSteps {
     private WebDriver navegador;
-    private int i=1;
 
-    @Dado("que estou acessando a aplicação")
-    public void queEstouAcessandoAAplicação() {
+    @Dado("que desejo adicionar uma conta")
+    public void queDesejoAdicionarUmaConta() {
         navegador = new ChromeDriver();
-        navegador.get("https://seubarriga.wcaquino.me");
-    }
-    @Quando("informo o usuário {string}")
-    public void informoOUsuário(String email) {
-        navegador.findElement(By.id("email")).sendKeys(email);
-    }
-    @Quando("a senha {string}")
-    public void aSenha(String senha) {
-        navegador.findElement(By.id("senha")).sendKeys(senha);
-    }
-    @Quando("seleciono entrar")
-    public void selecionoEntrar() {
+        navegador.get("https://seubarriga.wcaquino.me/login");
+        navegador.findElement(By.id("email")).sendKeys("seila@gmail.com");
+        navegador.findElement(By.id("senha")).sendKeys("g123456");
         navegador.findElement(By.tagName("button")).click();
-    }
-    @Então("visualizo a página inicial")
-    public void visualizoAPáginaInicial() {
-        String saudacao = navegador.findElement(By.xpath("//div [@class=\"alert alert-success\"]")).getText();
-        Assert.assertEquals("Bem vindo, Gustavo!",saudacao);
-    }
-    @Quando("seleciono Contas")
-    public void selecionoContas() {
         navegador.findElement(By.linkText("Contas")).click();
-    }
-    @Quando("seleciono Adicionar")
-    public void selecionoAdicionar() {
         navegador.findElement(By.linkText("Adicionar")).click();
     }
-    @Quando("^informo a conta \"(.*\\s?)\"$")
-    public void informoAConta(String conta) {
-        navegador.findElement(By.id("nome")).sendKeys(conta);
-    }
-    @Quando("seleciono Salvar")
-    public void selecionoSalvar() {
+
+    @Quando("adiciono a conta {string}>")
+    public void adicionoAConta(String string) {
+        navegador.findElement(By.id("nome")).sendKeys(string);
         navegador.findElement(By.tagName("button")).click();
     }
-    @Então("a conta é inserida com sucesso")
-    public void aContaÉInseridaComSucesso() {
-        String texto = navegador.findElement(By.xpath("//div [@class=\"alert alert-success\"]")).getText();
-        Assert.assertEquals("Conta adicionada com sucesso!",texto);
-    }
-    @Então("sou notificado que o nome da conta é obrigatório")
-    public void souNotificadoQueONomeDaContaÉObrigatório() {
-        String texto = navegador.findElement(By.xpath("//div [@class=\"alert alert-danger\"]")).getText();
-        Assert.assertEquals("Informe o nome da conta",texto);
-    }
-    @Então("sou notificado que já existe uma conta com esse nome")
-    public void souNotificadoQueJáExisteUmaContaComEsseNome() {
-        String texto = navegador.findElement(By.xpath("//div [@class=\"alert alert-danger\"]")).getText();
-        Assert.assertEquals("Já existe uma conta com esse nome!",texto);
-    }
+
     @Então("^recebo a mensagem \"(.*\\s?)\"$")
     public void receboAMensagem(String string) {
         String texto = navegador.findElement(By.xpath("//div[starts-with(@class, 'alert alert-')]")).getText();
@@ -80,11 +43,10 @@ public class InserirContasSteps {
     }
 
     @After (order = 1, value = "@funcionais")
-    public void screenshot(){
+    public void screenshot(Scenario cenario){
         File file = ((TakesScreenshot)navegador).getScreenshotAs(OutputType.FILE);
         try {
-            FileUtils.copyFile(file, new File("target/screenshots/"+Scenario.class.getName()+"."+i+".jpg"));
-            i++;
+            FileUtils.copyFile(file, new File("target/screenshots/"+cenario.getId()+".jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
